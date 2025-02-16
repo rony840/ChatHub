@@ -1,6 +1,8 @@
 import { auth } from './FirebaseConfig';
-//import firestore from '@react-native-firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "./FirebaseConfig";
+import { doc, setDoc, addDoc, getDoc, serverTimestamp } from "firebase/firestore";
+
 
 // Login method
 export const login = async (email, password) => {
@@ -25,32 +27,29 @@ export const login = async (email, password) => {
 };
 
 // Signup method
-export const signup = async (email, password) => {
+export const signup = async (email, password, userData) => {
   try {
     // Creating a user
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password, userData);
 
     // Check if the signup was successful
     if (!userCredential || !userCredential.user) {
       throw new Error('User signup failed');
     }
 
-    // //preparing userdata to be stored on firestore
-    // const { user, additionalUserInfo } = userCredential;
-    // const userDocData = {
-    //   uid: user.uid,
-    //   email: user.email, 
-    //   firstname: userData.firstname,
-    //   lastname: userData.lastname,
-    //   username: userData.username,
-    //   createdAt: firestore.FieldValue.serverTimestamp(),
-    //   providerId: additionalUserInfo?.providerId || "email/password",
-    // };
+    //preparing userdata to be stored on firestore
+    const { user, additionalUserInfo } = userCredential;
+    const userDocData = {
+      uid: user.uid,
+      email: user.email,
+      username: userData.username,
+      createdAt: serverTimestamp(),
+      providerId: additionalUserInfo?.providerId || "email/password",
+    };
 
-    // await firestore().collection('users').doc(user.email).set(userDocData);
-    // console.log('User created and data saved to Firestore:', userDocData);
-    // return userDocData;
-    return userCredential;
+    await setDoc(doc(db, "users", user.email), userDocData);
+    console.log('User created and data saved to Firestore:', userDocData);
+    return userDocData;
   } 
   catch (error) {
     if (error.code === 'auth/email-already-in-use') {

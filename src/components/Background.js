@@ -1,8 +1,7 @@
 import {View, StyleSheet} from 'react-native';
 import { Colors } from '../assets/colors/Colors';
 
-const Background = props => {
-    const {style2} = props;
+const Background = () => {
     return(
         <View style={styles.outer}/>
     );
