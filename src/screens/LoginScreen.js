@@ -32,7 +32,7 @@ const LoginScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.headerContainer}>
             <Image 
-              source={require('../assets/icons/wallet.png')} 
+              source={require('../assets/icons/chat.png')} 
               style={styles.logo}
             />
             <Text style={styles.companyName}>Chat Hub</Text>

@@ -10,7 +10,7 @@ const iconPaths = {
 const Heading = (props) => {
   const navigation = useNavigation();
   const { dispName, type, heading, style2, iconClickEnabled, onIconPress } = props;
-  const iconSource = iconPaths[type] || require("../assets/icons/wallet.png");
+  const iconSource = iconPaths[type] || require("../assets/icons/chat.png");
 
   const openDrawer = () => {
     if (iconClickEnabled) {
@@ -49,13 +49,11 @@ const Heading = (props) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: Colors.companyName,
+    backgroundColor: Colors.headingBG,
     flexDirection: 'row', // Horizontal layout
     alignItems: 'center', // Align items vertically centered
     justifyContent: 'space-between', // Distribute space between left and right
     paddingHorizontal: 10,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
     height: 70,
     width: '100%',
   },
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
   titleSt: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.appBackground,
+    color: Colors.companyName,
     textAlign: 'left',
   },
   icon: {
@@ -85,12 +83,12 @@ const styles = StyleSheet.create({
   image: {
     width: 40,
     height: 40,
-    tintColor: Colors.appBackground,
+    tintColor: Colors.companyName,
   },
   heading: {
     fontSize: 30, // Adjusted size to fit better on the right
     fontWeight: '500',
-    color: Colors.appBackground,
+    color: Colors.companyName,
     textAlign: 'right', // Align the heading text to the right
     flex: 1, // Take up remaining space on the right
     marginRight: 20,

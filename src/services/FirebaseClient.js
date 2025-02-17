@@ -1,7 +1,7 @@
 import { auth } from './FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { db } from "./FirebaseConfig";
-import { doc, setDoc, addDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, getDocs, collection, query, orderBy, serverTimestamp } from "firebase/firestore";
 
 
 // Login method
@@ -64,3 +64,60 @@ export const signup = async (email, password, userData) => {
   }
 };
 
+
+
+// Fetch chat messages from Firestore
+export const fetchMessages = async () => {
+  try {
+    console.log('Fetching messages from chats/global/messages');
+    
+    const messagesQuery = query(collection(db, "chats/global/messages"), orderBy("timestamp", "asc"));
+    const messagesSnapshot = await getDocs(messagesQuery);
+    
+    const messages = messagesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      timestamp: doc.data().timestamp.toDate().toString(), // Convert Firestore Timestamp to ISO string
+    }));
+
+    //console.log('Fetched messages:', messages);
+    return messages;
+  } catch (error) {
+    console.log("Error fetching chat messages:", error.message);
+    throw error;
+  }
+};
+
+
+export const sendMessage = async (messageData) => {
+  try {
+    const messageDoc = {
+      text: messageData.text,
+      sender: messageData.sender,
+      timestamp: serverTimestamp(), // This ensures Firestore sets the timestamp
+    };
+
+    // Add the message to Firestore
+    const docRef = await addDoc(collection(db, "chats", "global", "messages"), messageDoc);
+    console.log("Message sent with ID:", docRef.id);
+
+    // Fetch the message back from Firestore using the document reference ID
+    const messageSnapshot = await getDoc(doc(db, "chats", "global", "messages", docRef.id));
+    
+    if (messageSnapshot.exists()) {
+      const fullMessage = {
+        id: messageSnapshot.id,
+        ...messageSnapshot.data(),
+        timestamp: messageSnapshot.data().timestamp.toDate().toString(),
+      };
+      console.log('Added message with server timestamp: ', fullMessage);
+      return fullMessage;
+    } else {
+      console.error('Message not found!');
+      throw new Error('Message not found!');
+    }
+  } catch (error) {
+    console.error("Error sending message:", error.message);
+    throw error.message;
+  }
+};

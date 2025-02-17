@@ -1,62 +1,67 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView, FlatList, TextInput, Button, View, Text } from 'react-native';
-import { Background } from '../components/Components';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../services/FirebaseConfig';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMessagesStart, sendMessageStart } from '../store/slices/ChatSlices';
+import ChatBubble from '../components/ChatBubble';
 import { getAuth } from 'firebase/auth';
+import { Background, IconButton } from '../components/Components';
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState('');
+  const dispatch = useDispatch();
+  const messages = useSelector((state) => state.chat.messages);
   const auth = getAuth();
   const user = auth.currentUser;
+  const [inputText, setInputText] = useState('');
 
   useEffect(() => {
-    const messagesRef = collection(db, 'chats/global/messages');
-    const q = query(messagesRef, orderBy('timestamp', 'asc'));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-    
-    return unsubscribe;
-  }, []);
+    dispatch(fetchMessagesStart());
+  }, [dispatch]);
 
-  const sendMessage = async () => {
-    if (!inputText.trim()) return;
-    if (!user) return;
+  const handleSend = () => {
+    if (!inputText.trim() || !user) return;
     
-    await addDoc(collection(db, 'chats/global/messages'), {
+    const newMessage = {
       text: inputText,
       sender: user.email,
-      timestamp: serverTimestamp(),
-    });
+    };
     
+    dispatch(sendMessageStart(newMessage));
     setInputText('');
+  };
+
+  const renderItem = ({ item, index }) => {
+    const prevItem = index > 0 ? messages[index - 1] : null;
+    const showDate = !prevItem || new Date(prevItem.timestamp).toDateString() !== new Date(item.timestamp).toDateString();
+
+    return (
+      <>
+        {showDate && <Text style={styles.dateHeader}>{new Date(item.timestamp).toDateString()}</Text>}
+        <ChatBubble message={item} isCurrentUser={item.sender === user.email} />
+      </>
+    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Background />
+      <View style={styles.chatCont}>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.messageContainer}>
-            <Text style={styles.sender}>{item.sender}</Text>
-            <Text style={styles.message}>{item.text}</Text>
-          </View>
-        )}
+        renderItem={renderItem}
       />
       
+      
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Type a message..."
           value={inputText}
           onChangeText={setInputText}
+          placeholderTextColor={'rgb(198, 167, 95)'}
         />
-        <Button title="Send" onPress={sendMessage} />
+        <IconButton onPress={handleSend}/>
       </View>
     </SafeAreaView>
   );
@@ -67,30 +72,35 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  messageContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  chatCont:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding:'5%',
+    paddingBottom:'14%',
+    marginBottom:'10%',
   },
-  sender: {
+  dateHeader: {
+    textAlign: 'center',
+    color:'rgba(253, 253, 253, 0.49)',
+    fontSize: 14,
     fontWeight: 'bold',
-  },
-  message: {
-    fontSize: 16,
+    marginVertical: 5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
+    backgroundColor: 'rgb(115, 85, 17)'
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
+    color: 'white',
+    paddingLeft: 0,
+    borderRadius: 30,
+    marginRight:10,
   },
 });
 

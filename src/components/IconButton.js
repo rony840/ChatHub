@@ -1,16 +1,8 @@
 import { StyleSheet, Image, Pressable } from "react-native";
 import { Colors } from "../assets/colors/Colors";
 
-// Create a dictionary for icon paths
-const iconPaths = {
-  profile: require("../assets/icons/profile.png"),
-  // Add more icons as needed
-};
-
-const IconButton = ({ type, onPress, opacity = true }) => {
-  // Get the icon path from the dictionary, or fallback to a default icon if not found
-  const iconSource = iconPaths[type] || require("../assets/icons/profile.png");
-
+const IconButton = ({ onPress, opacity = true }) => {
+  
   return (
     <Pressable
       style={({ pressed }) => [
@@ -20,7 +12,7 @@ const IconButton = ({ type, onPress, opacity = true }) => {
       onPress={onPress}
     >
       <Image style={styles.icon1}
-      source={iconSource} />
+      source={require("../assets/icons/send.png")} />
     </Pressable>
   );
 };
@@ -39,7 +31,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 30,
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'rgb(229, 220, 40)',
     alignItems: 'center',
   },
   iconContainer2: {
