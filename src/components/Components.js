@@ -1,5 +1,7 @@
 import Background from "./Background";
 import ChatBubble from "./ChatBubble";
+import ChatInput from "./ChatInput";
+import ChatList from "./ChatList";
 import FormButton from "./FormButton";
 import FormField from "./FormField";
 import FormFooter from "./FormFooter";
@@ -15,5 +17,7 @@ export {
     Heading,
     IconButton,
     TextDisplay,
-    ChatBubble
+    ChatBubble,
+    ChatInput,
+    ChatList
 };

@@ -1,22 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, SafeAreaView, FlatList, TextInput, View, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessageStart } from '../store/slices/ChatSlices';
-import ChatBubble from '../components/ChatBubble';
-import { getAuth } from 'firebase/auth';
-import { Background, IconButton } from '../components/Components';
+import { Background, ChatList, ChatInput } from '../components/Components';
 
 const ChatScreen = () => {
   const dispatch = useDispatch();
   const messages = useSelector((state) => state.chat.messages);
-  //console.log('msg: ',messages)
   const user = useSelector((state) => state.user.currentUser);
   const [inputText, setInputText] = useState('');
-  const flatListRef = useRef(null); // Reference for FlatList
+  const scrollRef = useRef(null); // Reference for scrolling chatList
 
   useEffect(() => {
     if (messages.length > 0) {
-      flatListRef.current?.scrollToEnd({ animated: true });
+      scrollRef.current?.scrollToEnd({ animated: true });
     }
   }, [messages]);
 
@@ -33,55 +30,31 @@ const ChatScreen = () => {
     setInputText('');
   };
 
-  const renderItem = ({ item, index }) => {
-    const prevItem = index > 0 ? messages[index - 1] : null;
-    const showDate = !prevItem || new Date(prevItem.timestamp).toDateString() !== new Date(item.timestamp).toDateString();
-
-    return (
-      <>
-        {showDate && <Text style={styles.dateHeader}>{new Date(item.timestamp).toDateString()}</Text>}
-        <ChatBubble message={item} isCurrentUser={item.sender === user} />
-      </>
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.screenContainer}>
       <Background />
-      <View style={styles.chatCont}>
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          initialNumToRender={10} // Render the first 10 items initially
-          maxToRenderPerBatch={5} 
-          windowSize={5} // The number of items to keep in memory (before and after the visible area)
-          
+      <View style={styles.chatListContainer}>
+        <ChatList
+        scrollReference={scrollRef}
+        chats={messages}
+        currUser={user}
         />
       </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type a message..."
-          value={inputText}
-          onChangeText={setInputText}
-          placeholderTextColor={'rgb(198, 167, 95)'}
-        />
-        <IconButton onPress={handleSend}/>
-      </View>
+      <ChatInput
+      msgInput={setInputText}
+      txtValue={inputText}
+      onSendPress={handleSend}
+      />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
     backgroundColor: 'transparent',
   },
-  chatCont: {
+  chatListContainer: {
     position: 'absolute',
     top:0,
     left:0,
@@ -92,26 +65,7 @@ const styles = StyleSheet.create({
     paddingBottom: '14%',
     marginBottom: '10%',
   },
-  dateHeader: {
-    textAlign: 'center',
-    color: 'rgba(253, 253, 253, 0.49)',
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginVertical: 5,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'rgb(115, 85, 17)',
-  },
-  input: {
-    flex: 1,
-    color: 'white',
-    paddingLeft: 0,
-    borderRadius: 30,
-    marginRight: 10,
-  },
+  
 });
 
 export default ChatScreen;
