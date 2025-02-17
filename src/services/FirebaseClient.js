@@ -1,7 +1,7 @@
 import { auth } from './FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { db } from "./FirebaseConfig";
-import { doc, getDoc, setDoc, addDoc, getDocs, collection, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 
 
 // Login method
@@ -9,9 +9,13 @@ export const login = async (email, password) => {
   try {
     //authenticating user
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    //console.log('User signed in:', userCredential.user);
-    return userCredential.user;
-  } 
+    //fetching username from DB
+    const userRef = doc(db, "users", email);
+    const userInfo = await getDoc(userRef);
+    const userData = userInfo.data().username;
+    return userData;//return username
+  }
+
   catch (error) {
     if (error.code === 'auth/invalid-email') {
       console.log('That email address is invalid!');
@@ -69,10 +73,7 @@ export const signup = async (email, password, userData) => {
 // Listen to chat messages in real time
 export const listenToMessages = (callback) => {
   try {
-    //console.log("Listening for messages...");
-
     const messagesQuery = query(collection(db, "chats/global/messages"), orderBy("timestamp", "asc"));
-
     // Set up Firestore listener
     const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
       const messages = snapshot.docs.map(doc => ({
@@ -80,11 +81,8 @@ export const listenToMessages = (callback) => {
         ...doc.data(),
         timestamp: doc.data().timestamp?.toDate()?.toString() || new Date().toString(),
       }));
-
-      //console.log("Real-time messages updated:", messages);
       callback(messages); // Pass messages to Redux via callback
     });
-
     return unsubscribe; // Return unsubscribe function to stop listening
   } catch (error) {
     console.error("Error setting up real-time listener:", error.message);
@@ -102,7 +100,6 @@ export const sendMessage = async (messageData) => {
 
     // Add the message to Firestore
     const docRef = await addDoc(collection(db, "chats", "global", "messages"), messageDoc);
-    //console.log("Message sent with ID:", docRef.id);
 
     // Fetch the message back from Firestore using the document reference ID
     const messageSnapshot = await getDoc(doc(db, "chats", "global", "messages", docRef.id));

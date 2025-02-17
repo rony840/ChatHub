@@ -19,7 +19,7 @@ export const loginOnChathub = async (email, password) => {
   try {
     const user = await login(email, password);
     //console.log('Logged in as:', user.email);
-    Alert.alert('Logged in:', user.email);
+    Alert.alert('Logged in:', user);
     return user;
   } 
   catch (error) {

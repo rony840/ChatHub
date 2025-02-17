@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Colors } from '../assets/colors/Colors';
 import { useNavigation } from '@react-navigation/native';
@@ -88,11 +88,11 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 30, // Adjusted size to fit better on the right
     fontWeight: '500',
-    color: Colors.companyName,
+    color: Colors.headingColor1,
     textAlign: 'right', // Align the heading text to the right
     flex: 1, // Take up remaining space on the right
     marginRight: 20,
   },
 });
 
-export default Heading;
+export default memo(Heading);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Colors } from '../assets/colors/Colors';
 
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormFooter;
+export default memo(FormFooter);

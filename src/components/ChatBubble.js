@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 const ChatBubble = ({ message, isCurrentUser }) => {
@@ -41,4 +41,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatBubble;
+export default memo(ChatBubble);

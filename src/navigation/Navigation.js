@@ -30,9 +30,7 @@ const UserStack = () => {
 const Drawer = createDrawerNavigator();
 
 function DrawerTab() {
-  const user = useSelector((state) => state.user.user); // Fetch user data from Redux state
-  const { username } = user || {}; // Destructure firstName and lastName
-  
+  const username = useSelector((state) => state.user.currentUser); // Fetch user data from Redux state
   return (
     <Drawer.Navigator
       screenOptions={{

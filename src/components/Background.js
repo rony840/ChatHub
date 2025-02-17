@@ -1,5 +1,6 @@
 import {View, StyleSheet} from 'react-native';
 import { Colors } from '../assets/colors/Colors';
+import { memo } from 'react';
 
 const Background = () => {
     return(
@@ -15,4 +16,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Background;
+export default memo(Background);

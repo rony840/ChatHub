@@ -9,8 +9,8 @@ import { Background, IconButton } from '../components/Components';
 const ChatScreen = () => {
   const dispatch = useDispatch();
   const messages = useSelector((state) => state.chat.messages);
-  const auth = getAuth();
-  const user = auth.currentUser;
+  //console.log('msg: ',messages)
+  const user = useSelector((state) => state.user.currentUser);
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef(null); // Reference for FlatList
 
@@ -25,7 +25,7 @@ const ChatScreen = () => {
     
     const newMessage = {
       text: inputText,
-      sender: user.email,
+      sender: user,
       timestamp: Date.now(), // Ensure new message has a timestamp
     };
     
@@ -40,7 +40,7 @@ const ChatScreen = () => {
     return (
       <>
         {showDate && <Text style={styles.dateHeader}>{new Date(item.timestamp).toDateString()}</Text>}
-        <ChatBubble message={item} isCurrentUser={item.sender === user.email} />
+        <ChatBubble message={item} isCurrentUser={item.sender === user} />
       </>
     );
   };
@@ -56,6 +56,10 @@ const ChatScreen = () => {
           renderItem={renderItem}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          initialNumToRender={10} // Render the first 10 items initially
+          maxToRenderPerBatch={5} 
+          windowSize={5} // The number of items to keep in memory (before and after the visible area)
+          
         />
       </View>
       <View style={styles.inputContainer}>

@@ -8,8 +8,8 @@ export const Colors = {
     formInputError:'rgb(255, 155, 131)',
     formButtonTxt:'rgb(255, 255, 255)',
     formButtonBG:'rgb(213, 136, 28)',
-    logoColor1: 'rgb(200, 207, 255)',
-    companyName: 'rgb(227, 230, 255)',
+    logoColor1: 'rgb(255, 220, 79)',
+    companyName: 'rgb(255, 220, 79)',
     headingColor1: 'rgb(255, 255, 255)',
     headingBG: 'rgb(154, 107, 0)'
 }

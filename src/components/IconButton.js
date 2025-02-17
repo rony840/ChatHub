@@ -1,5 +1,6 @@
 import { StyleSheet, Image, Pressable } from "react-native";
 import { Colors } from "../assets/colors/Colors";
+import { memo } from "react";
 
 const IconButton = ({ onPress, opacity = true }) => {
   
@@ -48,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IconButton;
+export default memo(IconButton);

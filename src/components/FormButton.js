@@ -1,7 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Colors } from "../assets/colors/Colors";
+import { memo } from "react";
 
-const FormButton = props =>{
+const FormButton = props => {
     const {btStyle,title,btTxt,onPress} = props;
     return(
         <TouchableOpacity
@@ -31,4 +32,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FormButton;
+export default memo(FormButton);

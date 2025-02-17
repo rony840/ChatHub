@@ -1,5 +1,6 @@
 import {View,Text,StyleSheet, TextInput} from 'react-native';
 import { Colors } from '../assets/colors/Colors';
+import { memo } from 'react';
 
 const FormField = props => {
     const {title,editable,onChange,placeholder,value1,error,secure} = props;
@@ -66,4 +67,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FormField;
+export default memo(FormField);

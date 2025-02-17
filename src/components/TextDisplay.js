@@ -1,5 +1,6 @@
 import { StyleSheet, Text } from "react-native";
 import { Colors } from "../assets/colors/Colors";
+import { memo } from "react";
 
 const TextDisplay = (props) => {
     const {txt} = props;
@@ -14,4 +15,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default TextDisplay;
+export default memo(TextDisplay);
