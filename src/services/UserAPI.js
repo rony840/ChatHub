@@ -4,7 +4,7 @@ import { Alert } from 'react-native';
 export const signupOnChathub = async (email, password, userData) => {
   try {
     const user = await signup(email, password, userData);
-    console.log('Signed up as:', user.email);
+    //console.log('Signed up as:', user.email);
     Alert.alert('Signed up:', user.email);
     return user;
   } 
@@ -18,7 +18,7 @@ export const signupOnChathub = async (email, password, userData) => {
 export const loginOnChathub = async (email, password) => {
   try {
     const user = await login(email, password);
-    console.log('Logged in as:', user.email);
+    //console.log('Logged in as:', user.email);
     Alert.alert('Logged in:', user.email);
     return user;
   } 

@@ -1,11 +1,9 @@
-import { fetchMessages, sendMessage } from "./FirebaseClient";
+import { listenToMessages, sendMessage } from "./FirebaseClient";
 
 
-export const fetchChat = async () => {
+export const fetchChat = async (callback) => {
   try {
-    console.log('fetch inside chatapi')
-    const messages = await fetchMessages();
-    return messages;
+    return listenToMessages(callback);
   } 
   catch (error) {
     console.log('Fetch messages failed:', error.message);

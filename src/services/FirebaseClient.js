@@ -1,7 +1,7 @@
 import { auth } from './FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { db } from "./FirebaseConfig";
-import { doc, getDoc, setDoc, addDoc, getDocs, collection, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, getDocs, collection, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 
 
 // Login method
@@ -9,7 +9,7 @@ export const login = async (email, password) => {
   try {
     //authenticating user
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log('User signed in:', userCredential.user);
+    //console.log('User signed in:', userCredential.user);
     return userCredential.user;
   } 
   catch (error) {
@@ -48,7 +48,7 @@ export const signup = async (email, password, userData) => {
     };
 
     await setDoc(doc(db, "users", user.email), userDocData);
-    console.log('User created and data saved to Firestore:', userDocData);
+    //console.log('User created and data saved to Firestore:', userDocData);
     return userDocData;
   } 
   catch (error) {
@@ -66,25 +66,28 @@ export const signup = async (email, password, userData) => {
 
 
 
-// Fetch chat messages from Firestore
-export const fetchMessages = async () => {
+// Listen to chat messages in real time
+export const listenToMessages = (callback) => {
   try {
-    console.log('Fetching messages from chats/global/messages');
-    
-    const messagesQuery = query(collection(db, "chats/global/messages"), orderBy("timestamp", "asc"));
-    const messagesSnapshot = await getDocs(messagesQuery);
-    
-    const messages = messagesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      timestamp: doc.data().timestamp.toDate().toString(), // Convert Firestore Timestamp to ISO string
-    }));
+    //console.log("Listening for messages...");
 
-    //console.log('Fetched messages:', messages);
-    return messages;
+    const messagesQuery = query(collection(db, "chats/global/messages"), orderBy("timestamp", "asc"));
+
+    // Set up Firestore listener
+    const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+      const messages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        timestamp: doc.data().timestamp?.toDate()?.toString() || new Date().toString(),
+      }));
+
+      //console.log("Real-time messages updated:", messages);
+      callback(messages); // Pass messages to Redux via callback
+    });
+
+    return unsubscribe; // Return unsubscribe function to stop listening
   } catch (error) {
-    console.log("Error fetching chat messages:", error.message);
-    throw error;
+    console.error("Error setting up real-time listener:", error.message);
   }
 };
 
@@ -99,23 +102,12 @@ export const sendMessage = async (messageData) => {
 
     // Add the message to Firestore
     const docRef = await addDoc(collection(db, "chats", "global", "messages"), messageDoc);
-    console.log("Message sent with ID:", docRef.id);
+    //console.log("Message sent with ID:", docRef.id);
 
     // Fetch the message back from Firestore using the document reference ID
     const messageSnapshot = await getDoc(doc(db, "chats", "global", "messages", docRef.id));
     
-    if (messageSnapshot.exists()) {
-      const fullMessage = {
-        id: messageSnapshot.id,
-        ...messageSnapshot.data(),
-        timestamp: messageSnapshot.data().timestamp.toDate().toString(),
-      };
-      console.log('Added message with server timestamp: ', fullMessage);
-      return fullMessage;
-    } else {
-      console.error('Message not found!');
-      throw new Error('Message not found!');
-    }
+    return messageSnapshot.id
   } catch (error) {
     console.error("Error sending message:", error.message);
     throw error.message;

@@ -14,7 +14,7 @@ const LoginScreen = () => {
   
   // Handle login
   const handleLogin = (values) => {
-    console.log('values in handle login screen: ', values);
+    //console.log('values in handle login screen: ', values);
     dispatch(loginUser(values));
   };
 

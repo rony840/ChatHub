@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, FlatList, TextInput, Button, View, Text } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, SafeAreaView, FlatList, TextInput, View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchMessagesStart, sendMessageStart } from '../store/slices/ChatSlices';
+import { sendMessageStart } from '../store/slices/ChatSlices';
 import ChatBubble from '../components/ChatBubble';
 import { getAuth } from 'firebase/auth';
 import { Background, IconButton } from '../components/Components';
@@ -12,10 +12,13 @@ const ChatScreen = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const [inputText, setInputText] = useState('');
+  const flatListRef = useRef(null); // Reference for FlatList
 
   useEffect(() => {
-    dispatch(fetchMessagesStart());
-  }, [dispatch]);
+    if (messages.length > 0) {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
 
   const handleSend = () => {
     if (!inputText.trim() || !user) return;
@@ -23,6 +26,7 @@ const ChatScreen = () => {
     const newMessage = {
       text: inputText,
       sender: user.email,
+      timestamp: Date.now(), // Ensure new message has a timestamp
     };
     
     dispatch(sendMessageStart(newMessage));
@@ -45,13 +49,14 @@ const ChatScreen = () => {
     <SafeAreaView style={styles.container}>
       <Background />
       <View style={styles.chatCont}>
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-      />
-      
-      
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        />
       </View>
       <View style={styles.inputContainer}>
         <TextInput
@@ -72,19 +77,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  chatCont:{
+  chatCont: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    padding:'5%',
-    paddingBottom:'14%',
-    marginBottom:'10%',
+    top:0,
+    left:0,
+    right:0,
+    bottom:0,
+    flex: 1,
+    padding: '5%',
+    paddingBottom: '14%',
+    marginBottom: '10%',
   },
   dateHeader: {
     textAlign: 'center',
-    color:'rgba(253, 253, 253, 0.49)',
+    color: 'rgba(253, 253, 253, 0.49)',
     fontSize: 14,
     fontWeight: 'bold',
     marginVertical: 5,
@@ -93,14 +99,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: 'rgb(115, 85, 17)'
+    backgroundColor: 'rgb(115, 85, 17)',
   },
   input: {
     flex: 1,
     color: 'white',
     paddingLeft: 0,
     borderRadius: 30,
-    marginRight:10,
+    marginRight: 10,
   },
 });
 

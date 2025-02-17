@@ -1,23 +1,35 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, take, fork } from "redux-saga/effects";
 import { 
-    fetchMessagesStart, fetchMessagesSuccess, fetchMessagesFailed,
-    sendMessageStart, sendMessageSuccess, sendMessageFailed
+    fetchMessagesSuccess, fetchMessagesFailed,
+    sendMessageSuccess, sendMessageFailed
 } from "../slices/ChatSlices";
 import { fetchChat, sendChat } from "../../services/ChatAPI";
+import { eventChannel } from "redux-saga";
 
-// Fetch messages saga
-function* fetchMessagesSaga() {
+function createMessageChannel() {
+    return eventChannel((emit) => {
+      const unsubscribe = fetchChat((messages) => {
+        emit(messages); // Emit messages when Firestore updates
+      });
+  
+      return () => unsubscribe(); // Cleanup listener on unmount
+    });
+  }
+  
+  function* fetchMessagesListenerSaga() {
+    const channel = yield call(createMessageChannel);
+  
     try {
-        console.log('fetch request in saga')
-        //yield put(fetchMessagesStart());
-
-        const messages = yield call(fetchChat);
-        yield put(fetchMessagesSuccess(messages));
+      while (true) {
+        const messages = yield take(channel);
+        yield put(fetchMessagesSuccess(messages)); // Dispatch to Redux
+      }
     } catch (error) {
-        console.error('Fetch Messages Error:', error);
-        yield put(fetchMessagesFailed(error.message || 'Failed to load messages.'));
+      yield put(fetchMessagesFailed(error.message || "Failed to listen for messages."));
+    } finally {
+      channel.close();
     }
-}
+  }
 
 // Send message saga
 function* sendMessageSaga(action) {
@@ -33,6 +45,6 @@ function* sendMessageSaga(action) {
 
 // Watcher saga
 export function* chatSaga() {
-    yield takeLatest('chat/fetchMessagesStart', fetchMessagesSaga);
+    yield fork(fetchMessagesListenerSaga);
     yield takeLatest('chat/sendMessageStart', sendMessageSaga);
 }

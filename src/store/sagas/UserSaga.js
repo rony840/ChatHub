@@ -9,10 +9,10 @@ import { loginOnChathub, signupOnChathub } from "../../services/UserAPI";
 function* loginUserSaga(action) {
     try {
         yield put(startLoading());
-        console.log('User in login saga:', action.payload.email);
+        //console.log('User in login saga:', action.payload.email);
         const response = yield call(loginOnChathub, action.payload.email, action.payload.password);
-        console.log('Login response:', response);
-        yield put(loginUserSuccess(response._user)); 
+        //console.log('Login response:', response);
+        yield put(loginUserSuccess(response._user));
         
     } catch (error) {
         console.error('Login error:', error);
@@ -26,9 +26,9 @@ function* loginUserSaga(action) {
 function* signupUserSaga(action) {
     try {
         yield put(startLoading());
-        console.log('User in signup saga:', action.payload.email);
+        //console.log('User in signup saga:', action.payload.email);
         const response = yield call(signupOnChathub, action.payload.email, action.payload.password, action.payload);
-        console.log('Signup response:', response);
+        //console.log('Signup response:', response);
         yield put(signupUserSuccess(response.username)); 
         
     } catch (error) {
