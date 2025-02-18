@@ -1,10 +1,10 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { 
+import { logoutUserSuccess, logoutUserFailed,
     startLoading, stopLoading, setError,
     loginUserFailed, loginUserSuccess,
     signupUserFailed, signupUserSuccess 
 } from "../slices/UserSlices";
-import { loginOnChathub, signupOnChathub } from "../../services/UserAPI";
+import { loginOnChathub, signupOnChathub, logoutFromChathub } from "../../services/UserAPI";
 
 function* loginUserSaga(action) {
     try {
@@ -36,8 +36,19 @@ function* signupUserSaga(action) {
     }
 }
 
+function* logoutUserSaga() {
+    try {
+      yield call(logoutFromChathub);
+      yield put(logoutUserSuccess());
+    } catch (error) {
+      console.error("Logout error:", error);
+      yield put(logoutUserFailed(error.message || "Logout failed. Try again."));
+    }
+  }
+
 // Watcher saga
 export function* userSaga() {
   yield takeLatest('user/loginUser', loginUserSaga);
   yield takeLatest('user/signupUser', signupUserSaga);
+  yield takeLatest('user/logoutUser', logoutUserSaga);
 }

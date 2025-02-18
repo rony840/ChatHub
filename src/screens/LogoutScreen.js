@@ -2,22 +2,22 @@ import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { Background, TextDisplay, FormButton } from '../components/Components';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-//import { logoutUserAction } from '../store/slices/userSlice';
+import { logoutUser } from '../store/slices/UserSlices';
 
 const LogoutScreen = () => {
   const navigation = useNavigation();
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-//   // Function to handle logout
-//   const handleLogout = async () => {
-//     try {
+  // Function to handle logout
+  const handleLogout = async () => {
+    try {
 
-//       dispatch(logoutUserAction());
+      dispatch(logoutUser());
 
-//     } catch (error) {
-//       console.error('Error logging out:', error);
-//     }
-//   };
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,7 +27,7 @@ const LogoutScreen = () => {
           <TextDisplay txt={'Are you sure you want to log out?'} />
           <View style={styles.btnCont}>
             <FormButton title={'NO'} onPress={() => navigation.goBack()} />
-            <FormButton title={'YES'} onPress={() => navigation.goBack()} />
+            <FormButton title={'YES'} onPress={handleLogout} />
           </View>
         </View>
       </View>

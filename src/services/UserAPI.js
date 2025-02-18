@@ -1,4 +1,4 @@
-import { login, signup } from "./FirebaseClient";
+import { login, signup, logout } from "./FirebaseClient";
 import { Alert } from 'react-native';
 
 export const signupOnChathub = async (email, password, userData) => {
@@ -25,6 +25,20 @@ export const loginOnChathub = async (email, password) => {
   catch (error) {
     console.log('Login failed:', error.message);
     Alert.alert('Login failed:', error.message);
+    throw error;
+  }
+};
+
+export const logoutFromChathub = async () => {
+  try {
+    const user = await logout();
+    //console.log('Logged in as:', user.email);
+    Alert.alert('Logout Successful!');
+    return user;
+  } 
+  catch (error) {
+    console.log('Logout Failed: ', error.message);
+    Alert.alert('Logout Failed:', error.message);
     throw error;
   }
 };

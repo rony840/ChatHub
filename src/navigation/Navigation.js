@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native';
 import { Heading } from '../components/Components';
 import { useSelector } from 'react-redux';
 import { LoginScreen, SignupScreen, ChatScreen, LogoutScreen } from '../screens/Screen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,9 +48,9 @@ function DrawerTab() {
             headingText = 'Logout';
             iconClickEnabled = false; // Disable icon click on Edit Profile screen
           }
-
+          const insets = useSafeAreaInsets();
           return (
-            <SafeAreaView>
+            <SafeAreaView style={[{ paddingTop: insets.top }]}>
               <Heading
                 heading={headingText}
                 type={'Profile'}

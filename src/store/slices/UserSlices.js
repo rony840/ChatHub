@@ -38,6 +38,22 @@ const userSlice = createSlice({
             state.loggedin = true;
             state.isAuthenticated= true;
         },
+        logoutUser: (state) => {
+            state.loading = true;
+        },
+        logoutUserSuccess: (state) => {
+            state.user = null;
+            state.isAuthenticated = false;
+            state.signedup = false;
+            state.loggedin = false;
+            state.authUser = "Logged Out!";
+            state.currentUser = {username: ""}
+            state.loading = false;
+        },
+        logoutUserFailed: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
         startLoading: (state) => {
             state.loading = true; // Set loading to true when starting async operations
         },
@@ -57,6 +73,9 @@ export const {
     loginUser,
     loginUserFailed,
     loginUserSuccess,
+    logoutUser,
+    logoutUserSuccess,
+    logoutUserFailed,
     startLoading, 
     stopLoading, 
     setError 

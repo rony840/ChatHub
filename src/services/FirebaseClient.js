@@ -1,5 +1,5 @@
 import { auth } from './FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, signOut } from "firebase/auth";
 import { db } from "./FirebaseConfig";
 import { doc, getDoc, setDoc, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 
@@ -68,7 +68,16 @@ export const signup = async (email, password, userData) => {
   }
 };
 
-
+export const logout = async () => {
+  try {
+    const auth = getAuth();
+    await signOut(auth);
+    console.log("User logged out successfully");
+  } catch (error) {
+    console.error("Error logging out:", error);
+    throw error; 
+  }
+};
 
 // Listen to chat messages in real time
 export const listenToMessages = (callback) => {
