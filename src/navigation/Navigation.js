@@ -32,6 +32,7 @@ const Drawer = createDrawerNavigator();
 
 function DrawerTab() {
   const username = useSelector((state) => state.user.currentUser); // Fetch user data from Redux state
+  const insets = useSafeAreaInsets();
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -48,7 +49,7 @@ function DrawerTab() {
             headingText = 'Logout';
             iconClickEnabled = false; // Disable icon click on Edit Profile screen
           }
-          const insets = useSafeAreaInsets();
+          
           return (
             <SafeAreaView style={[{ paddingTop: insets.top }]}>
               <Heading
