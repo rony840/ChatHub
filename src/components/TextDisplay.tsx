@@ -1,8 +1,12 @@
 import { StyleSheet, Text } from "react-native";
 import { Colors } from "../assets/colors/Colors";
-import { memo } from "react";
+import React, { memo } from "react";
 
-const TextDisplay = (props) => {
+interface textDisplayProps{
+    txt: string
+}
+
+const TextDisplay: React.FC <textDisplayProps> = (props) => {
     const {txt} = props;
     return(<Text style={styles.txtStyle}>{txt}</Text>);
 }

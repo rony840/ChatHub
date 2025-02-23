@@ -1,8 +1,13 @@
 import { StyleSheet, Image, Pressable } from "react-native";
 import { Colors } from "../assets/colors/Colors";
-import { memo } from "react";
+import React, { memo } from "react";
 
-const IconButton = ({ onPress, opacity = true }) => {
+interface IconButtonProps {
+  onPress: () => void;
+  opacity: Boolean;
+}
+
+const IconButton: React.FC <IconButtonProps> = ({ onPress, opacity = true }) => {
   
   return (
     <Pressable
@@ -23,7 +28,7 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
     alignSelf: 'center',
-    tintColor: Colors.white,
+    tintColor: Colors.iconTint,
     zIndex: 1,
   },
   iconContainer1: {
@@ -32,7 +37,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 30,
     justifyContent: 'center',
-    backgroundColor: 'rgb(229, 220, 40)',
+    backgroundColor: Colors.iconBG,
     alignItems: 'center',
   },
   iconContainer2: {

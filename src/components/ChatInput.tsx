@@ -1,9 +1,14 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import IconButton from "./IconButton";
 import { StyleSheet, TextInput, View } from "react-native";
 
+interface chatInputProps {
+    msgInput: (txtValue: string) => void
+    txtValue: string;
+    onSendPress: () => void;
+}
 
-const ChatInput = (props) => {
+const ChatInput: React.FC <chatInputProps> = props => {
     const {msgInput, txtValue, onSendPress} = props;
     return(
         <View style={styles.inputContainer}>
@@ -14,7 +19,7 @@ const ChatInput = (props) => {
                 onChangeText={msgInput}
                 placeholderTextColor={'rgb(198, 167, 95)'}
             />
-            <IconButton onPress={onSendPress}/>
+            <IconButton opacity={true} onPress={onSendPress}/>
         </View>
     );
 }

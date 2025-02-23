@@ -1,8 +1,18 @@
 import {View,Text,StyleSheet, TextInput} from 'react-native';
 import { Colors } from '../assets/colors/Colors';
-import { memo } from 'react';
+import React, { memo } from 'react';
 
-const FormField = props => {
+interface formFieldProps{
+    title: String;
+    editable: boolean;
+    onChange: (value1: string) => void;
+    placeholder: string;
+    value1: string | undefined;
+    error: string | null;
+    secure: boolean;
+}
+
+const FormField: React.FC <formFieldProps> = (props) => {
     const {title,editable,onChange,placeholder,value1,error,secure} = props;
     return(
         <View style={styles.container}>
@@ -33,7 +43,7 @@ const styles = StyleSheet.create({
         borderRadius:20,
         padding:10,
         height: 100,
-        Width:'100%',
+        width:'100%',
         marginBottom: 20,
 
     },

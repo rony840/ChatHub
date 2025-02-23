@@ -7,12 +7,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormButton, FormField, Background, FormFooter, Heading } from '../components/Components';
 import { signupUser } from '../store/slices/UserSlices';
 import { SignupSchema } from '../schemas/Schemas';
+import { RootState } from '../store/Store'; // Import your RootState from store
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const SignupScreen = () => {
+interface formObject{
+ username: string;
+ email:string;
+ password:string;
+
+}
+
+type AuthStackParamList = {
+  Login: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
+
+const SignupScreen: React.FC = () => {
   const dispatch = useDispatch(); 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
-  const { signedup } = useSelector((state) => state.user);
+  const { signedup } = useSelector((state:RootState) => state.user);
 
   useEffect(() => {
       if (signedup) {
@@ -21,7 +36,7 @@ const SignupScreen = () => {
       }
     }, [signedup, navigation]);
 
-  const handlerSignupUser = (values) => {
+  const handlerSignupUser = (values:formObject) => {
     try {
       const { username, email, password } = values;
       const userData = {
@@ -30,7 +45,7 @@ const SignupScreen = () => {
         password,
       };
       dispatch(signupUser(userData));
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
       Alert.alert('Error', error.message || 'Something went wrong');
     }
@@ -48,7 +63,7 @@ const SignupScreen = () => {
       <View style={[styles.contentContainer, { paddingTop: insets.top }]}>
         
         <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
-          <Heading showWalletIcon={true} heading={'Signup Form'} />
+          <Heading dispName={'ChatHub'} type={'Chat'} style2={undefined} iconClickEnabled={false} iconPaths={undefined} heading={'Signup Form'} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -65,22 +80,30 @@ const SignupScreen = () => {
                   title={'Username'}
                   placeholder={'johndoe678'}
                   onChange={handleChange('username')}
-                  error={errors.username}
+                  error={errors.username??null}
+                  editable={true}
+                  value1={undefined}
+                  secure={false}
                 />
                 <FormField
                   title={'Email'}
                   placeholder={'johndoe@example.com'}
                   onChange={handleChange('email')}
-                  error={errors.email} 
+                  error={errors.email??null}
+                  editable={true}
+                  value1={undefined}
+                  secure={false}
                 />
                 <FormField
                   title={'Password'}
                   placeholder={'*******'}
                   onChange={handleChange('password')}
-                  error={errors.password}
-                  secure={true} 
+                  error={errors.password??null}
+                  secure={true}
+                  editable={true}
+                  value1={undefined}
                 />
-                <FormButton title={'Sign Up'} onPress={handleSubmit} />
+                <FormButton btStyle={undefined} btTxt={undefined} disabled={false} title={'Sign Up'} onPress={handleSubmit} />
               </View>
             )}
           </Formik>

@@ -5,6 +5,7 @@ const initialState = {
     loading: false,
     error: null,
     messageId: [],
+    newMsg: {},
 };
 
 const chatSlice = createSlice({
@@ -23,7 +24,8 @@ const chatSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
-        sendMessageStart: (state) => {
+        sendMessageStart: (state, action) => {
+            state.newMsg = action.payload;
             state.loading = true;
             state.error = null;
         },

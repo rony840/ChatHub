@@ -2,7 +2,14 @@ import React, { memo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Colors } from '../assets/colors/Colors';
 
-const FormFooter = props => {
+interface formFooterProps{
+  title1: string;
+  title2: string;
+  onPress: () => void;
+}
+
+
+const FormFooter: React.FC <formFooterProps> = props => {
     const {title1,title2,onPress} = props;
   return (
     <View style={styles.footer}>

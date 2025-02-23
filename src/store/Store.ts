@@ -6,24 +6,28 @@ import chatReducer from './slices/ChatSlices';
 import { chatSaga } from './sagas/ChatSaga';
 import { createLogger } from 'redux-logger';
 
-//creating instance of sagamiddleware
+
 const sagaMiddleware = createSagaMiddleware();
 
-// Creating the logger middleware instance
 const logger = createLogger({
-  collapsed: true, //set it to false to expand logs
-  diff: true, //shows difference in prev and next state
+  collapsed: true, 
+  diff: true, 
 });
 
-// Configuring the store with logger middleware
+// Configuring the store with typed reducers
 export const store = configureStore({
   reducer: {
     user: userReducer,
     chat: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sagaMiddleware,logger)
+    getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware, logger), // Explicitly disabling thunk since we use sagas
 });
 
+// Running the sagas
 sagaMiddleware.run(userSaga);
 sagaMiddleware.run(chatSaga);
+
+// Infer the `RootState` and `AppDispatch` types from the store
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

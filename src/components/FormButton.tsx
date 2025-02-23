@@ -1,11 +1,20 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Colors } from "../assets/colors/Colors";
-import { memo } from "react";
+import React, { memo } from "react";
 
-const FormButton = props => {
-    const {btStyle,title,btTxt,onPress} = props;
+interface formButtonProps {
+    btStyle: object | undefined;
+    title: string;
+    btTxt: object | undefined;
+    onPress: () => void;
+    disabled: boolean
+}
+
+const FormButton: React.FC <formButtonProps> = (props)=> {
+    const {btStyle,title,btTxt,onPress,disabled} = props;
     return(
         <TouchableOpacity
+        disabled={disabled}
             onPress={onPress}>
             <View style={{...styles.btn,...btStyle}}>
             <Text style={{...styles.btnText,...btTxt}}>{title||"Button Name"}</Text>

@@ -1,27 +1,42 @@
+import React from 'react';
 import { StyleSheet, SafeAreaView, View, ScrollView, Image, Text } from 'react-native';
 import { FormButton, FormField, Background, FormFooter } from '../components/Components';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../assets/colors/Colors';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { LoginSchema } from '../schemas/Schemas';
 import { useDispatch, useSelector } from 'react-redux'; 
 import { loginUser } from '../store/slices/UserSlices';
+import { RootState } from '../store/Store'; // Import your RootState from store
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+// Define the login form values interface
+interface LoginValues {
+  email: string;
+  password: string;
+}
+
+// Define navigation type
+type AuthStackParamList = {
+  Signup: undefined;
+};
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Signup'>;
+
+const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>(); // Typed navigation
   const dispatch = useDispatch(); // Initialize dispatch
-  const { loading, error, user } = useSelector((state) => state.user); // Access loading and error states from the Redux store
+  const { loading, error, user } = useSelector((state: RootState) => state.user); // Typed state
   
   // Handle login
-  const handleLogin = (values) => {
-    //console.log('values in handle login screen: ', values);
+  const handleLogin = (values: LoginValues, { setSubmitting }: FormikHelpers<LoginValues>) => {
     dispatch(loginUser(values));
+    setSubmitting(false);
   };
 
-  // Conditionally set initialValues based on the loading state
-  const initialValues = loading ? { email: '', password: '' } : { 
-    email: user?.email || '', 
-    password: user?.password || '' 
+  // Initial values setup
+  const initialValues: LoginValues = {
+    email: user?.email || '',
+    password: user?.password || '',
   };
 
   return (
@@ -38,42 +53,47 @@ const LoginScreen = () => {
             <Text style={styles.companyName}>Chat Hub</Text>
             <Text style={styles.heading}>Login</Text>
           </View>
+
           <Formik
-            initialValues={initialValues} // Use the dynamically set initial values
+            initialValues={initialValues}
             validationSchema={LoginSchema}
             onSubmit={handleLogin}
           >
-            {({ handleChange, handleSubmit, values, errors }) => (
+            {({ handleChange, handleSubmit, values, errors, isSubmitting }) => (
               <View style={styles.formContainer}>
                 <FormField
-                  title={'Email'}
-                  placeholder={'john@example.com'}
+                  title="Email"
+                  placeholder="john@example.com"
                   onChange={handleChange('email')}
                   value1={values.email}
-                  error={errors.email} 
+                  editable={true}
+                  secure={false}
+                  error={errors.email??null}
                 />
                 <FormField
-                  title={'Password'}
-                  placeholder={'* * * * * * *'}
+                  title="Password"
+                  editable={true}
+                  placeholder="* * * * * * *"
                   onChange={handleChange('password')}
                   secure={true}
                   value1={values.password}
-                  error={errors.password}
+                  error={errors.password??null}
                 />
                 {/* Show error message from Redux state */}
                 {error && <Text style={styles.errorText}>{error}</Text>}
-                <FormButton title={'Login'} onPress={handleSubmit} disabled={loading} />
+                <FormButton btStyle={undefined} btTxt={undefined} title="Login" onPress={handleSubmit} disabled={loading || isSubmitting} />
               </View>
             )}
           </Formik>
         </ScrollView>
         {/* Footer */}
-        <FormFooter title1={"Don't have an account?"} title2={"SignUp"} onPress={() => navigation.replace('Signup')} />
+        <FormFooter title1="Don't have an account?" title2="SignUp" onPress={() => navigation.replace('Signup')} />
       </View>
     </SafeAreaView>
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,

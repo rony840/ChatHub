@@ -1,7 +1,18 @@
 import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const ChatBubble = ({ message, isCurrentUser }) => {
+interface msg{
+  sender: string;
+  text: string;
+  timestamp: string;
+}
+
+interface props{
+  message: msg;
+  isCurrentUser: boolean;
+}
+
+const ChatBubble: React.FC<props> = ({ message, isCurrentUser }) => {
   return (
     <View style={[styles.container, isCurrentUser ? styles.currentUser : styles.otherUser]}>
       <Text style={styles.username}>{message.sender}</Text>

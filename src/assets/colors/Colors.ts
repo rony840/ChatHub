@@ -11,5 +11,9 @@ export const Colors = {
     logoColor1: 'rgb(255, 220, 79)',
     companyName: 'rgb(255, 220, 79)',
     headingColor1: 'rgb(255, 255, 255)',
-    headingBG: 'rgb(154, 107, 0)'
+    headingBG: 'rgb(154, 107, 0)',
+    iconTint: 'rgb(0, 0, 0)',
+    transparent: 'transparent',
+    iconPressed:'rgb(234, 199, 94)',
+    iconBG: 'rgb(229, 220, 40)',
 }

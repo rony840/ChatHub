@@ -3,8 +3,11 @@ import { Background, TextDisplay, FormButton } from '../components/Components';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../store/slices/UserSlices';
+import React from 'react';
 
-const LogoutScreen = () => {
+
+
+const LogoutScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -26,8 +29,8 @@ const LogoutScreen = () => {
         <View style={styles.bodyContainer}>
           <TextDisplay txt={'Are you sure you want to log out?'} />
           <View style={styles.btnCont}>
-            <FormButton title={'NO'} onPress={() => navigation.goBack()} />
-            <FormButton title={'YES'} onPress={handleLogout} />
+            <FormButton btStyle={undefined} btTxt={undefined} disabled={false} title={'NO'} onPress={() => navigation.goBack()} />
+            <FormButton btStyle={undefined} btTxt={undefined} disabled={false} title={'YES'} onPress={handleLogout} />
           </View>
         </View>
       </View>
