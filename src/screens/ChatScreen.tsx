@@ -7,7 +7,7 @@ import { Background, ChatList, ChatInput } from '../components/Components';
 interface msgObject {
   text: string;
   sender: string;
-  timestamp: number; 
+  timestamp: string; 
 }
 
 const ChatScreen: React.FC = () => {
@@ -29,7 +29,7 @@ const ChatScreen: React.FC = () => {
     const newMessage: msgObject = {
       text: inputText,
       sender: user,
-      timestamp: Date.now(), // Ensure new message has a timestamp
+      timestamp: Date.now.toString(), // Ensure new message has a timestamp
     };
     
     dispatch(sendMessageStart(newMessage));
