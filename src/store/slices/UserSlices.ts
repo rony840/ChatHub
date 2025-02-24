@@ -7,8 +7,8 @@ const initialState = {
     isAuthenticated: false,
     signedup: false,
     loggedin: false,
-    loading: false,  // Add a loading state to handle async operations
-    error: null,     // Optional: Add an error state for error handling
+    loading: false,
+    error: null,
 };
 
 const userSlice = createSlice({
@@ -42,7 +42,7 @@ const userSlice = createSlice({
             state.loading = true;
         },
         logoutUserSuccess: (state) => {
-            state.user = null;
+            state.user = {email: "", username: "", password: ""};
             state.isAuthenticated = false;
             state.signedup = false;
             state.loggedin = false;
