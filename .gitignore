@@ -37,3 +37,7 @@ yarn-error.*
 
 
 .env
+google-services.json
+GoogleService-Info.plist
+fireconst.ts
+build-1740413065943.aab

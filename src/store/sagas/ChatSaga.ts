@@ -1,4 +1,4 @@
-import { call, put, takeLatest, take, fork } from "redux-saga/effects";
+import { call, put, takeLatest, take, fork, select } from "redux-saga/effects";
 import { 
     fetchMessagesSuccess, fetchMessagesFailed,
     sendMessageSuccess, sendMessageFailed
@@ -16,31 +16,42 @@ interface MsgObject {
 
 // Create an event channel for Firestore messages
 function createMessageChannel() {
+    
     return eventChannel<MsgObject[]>((emit) => {
         const unsubscribe = fetchChat((messages: MsgObject[]) => {
             emit(messages);
+            console.log("Listening1...");
         });
-        return () => {
+        return () => { unsubscribe
             console.log("Unsubscribing...");
-            // Cleanup logic if needed
         };
     });
 }
 
-// Fetch messages listener saga
-function* fetchMessagesListenerSaga() {
-    const channel: ReturnType<typeof createMessageChannel> = yield call(createMessageChannel);
+interface stateObj{
+    isAuthenticated: Boolean;
+}
 
-    try {
-        while (true) {
-            const messages: MsgObject[] = yield take(channel);
-            yield put(fetchMessagesSuccess(messages)); // Dispatch to Redux
+const selectAuth = (state:any) => state.user;
+// Fetch messages listener saga
+function* fetchMessagesListenerSaga () {
+    const auth:stateObj = yield select(selectAuth);
+    if (!auth.isAuthenticated) {
+        const channel: ReturnType<typeof createMessageChannel> = yield call(createMessageChannel);
+
+        try {
+            while (!auth.isAuthenticated) {
+                console.log("Listening2...");
+                const messages: MsgObject[] = yield take(channel);
+                yield put(fetchMessagesSuccess(messages)); // Dispatch to Redux
+            }
+        } catch (error: any) {
+            yield put(fetchMessagesFailed(error instanceof Error ? error.message : "Failed to listen for messages."));
+        } finally {
+            console.log("stop Listening...");
+            channel.close();
         }
-    } catch (error: any) {
-        yield put(fetchMessagesFailed(error instanceof Error ? error.message : "Failed to listen for messages."));
-    } finally {
-        channel.close();
-    }
+    } else{console.log("Stopping listening..");}
 }
 
 // Send message saga

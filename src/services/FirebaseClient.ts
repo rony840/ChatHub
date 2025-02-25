@@ -61,11 +61,10 @@ export const login = async (email: string, password: string): Promise<string> =>
 };
 
 
-export const signup = async (email: string, password: string, username: string): Promise<UserDoc> => {
+export const signup = async (email: string, password: string, username: string): Promise<string> => {
   try {
     const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
     if (!user.email) {
       throw new Error("User email is null");
     }
@@ -80,7 +79,7 @@ export const signup = async (email: string, password: string, username: string):
 
     await setDoc(doc(db, "users", user.email), userDocData);
     
-    return userDocData;
+    return userDocData.username;
   } 
   catch (error: any) {
     console.error("Signup failed:", error.message);

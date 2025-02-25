@@ -5,7 +5,7 @@ export const signupOnChathub = async (email:string, password:string, username:st
   try {
     const user = await signup(email, password, username);
     //console.log('Signed up as:', user.email);
-    Alert.alert('Signed up:', user.email);
+    Alert.alert('Signed up:', user);
     return user;
   } 
   catch (error:any) {
@@ -31,10 +31,10 @@ export const loginOnChathub = async (email:string, password:string) => {
 
 export const logoutFromChathub = async () => {
   try {
-    const user = await logout();
-    //console.log('Logged in as:', user.email);
-    Alert.alert('Logout Successful!');
-    return user;
+    await logout();
+    const msg = 'Logout Successful!';
+    Alert.alert(msg);
+    return msg;
   } 
   catch (error:any) {
     console.log('Logout Failed: ', error.message);
